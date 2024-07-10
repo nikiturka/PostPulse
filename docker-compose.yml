@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+# user service
+  user_service:
+    build: ./user_service
+    command: uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+    volumes:
+      - ./user_service/:/app/
+    ports:
+      - '8000:8000'
+    depends_on:
+      - user_db
+
+  user_db:
+    image: postgres
+    volumes:
+      - postgres_data_user:/var/lib/postgresql/data/
+    ports:
+      - '5432:5432'
+    restart: always
+    env_file:
+      - user_service/.env
+
+volumes:
+  postgres_data_user:
